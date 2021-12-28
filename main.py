@@ -1,6 +1,7 @@
 import argparse
 import jinja2 as t
 import pandas as pd
+from pathlib import Path
 
 templates = t.Environment(loader=t.FileSystemLoader(searchpath="./"))
 
@@ -45,8 +46,13 @@ def parse_args():
     return parser.parse_args()
 
 
+def write_to_file(path: Path, content: str):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, 'w+', encoding='utf-8') as f:
+        f.write(content)
+
+
 if __name__ == '__main__':
     args = parse_args()
     result = render_template(read_data(args.input), args.template)
-    with open(args.output, 'w+', encoding='utf-8') as f:
-        f.write(result)
+    write_to_file(Path(args.output).absolute(), result)
